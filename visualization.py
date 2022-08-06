@@ -2,7 +2,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import numpy as np
 
-def visualize_embedding(X, labels):
+def visualize_embedding(X, labels = None):
     """Visualize the embedding using t-SNE.
     Args:
         X (np.ndarray): The embedding matrix of shape (N (embeddings), D (feature dimension)).
@@ -13,7 +13,10 @@ def visualize_embedding(X, labels):
     X_reduced = tsne.fit_transform(X)
     
     plt.figure(figsize=(10, 10))
-    plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=labels, cmap=plt.cm.get_cmap("jet", 10))
+    if labels is None:
+        plt.scatter(X_reduced[:, 0], X_reduced[:, 1])
+    else:
+        plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=labels, cmap=plt.cm.get_cmap("jet", 10))
     plt.show()
     
 
