@@ -1,13 +1,16 @@
-import tqdm as tqdm
+from tqdm import tqdm
 import torch.nn.functional as functional
+import torch
 
-def train(args, dataloader, models, loss_function, optimizer):
+def train(args, dataloader, models, loss_function, optimizer, scheduler):
     
     criterion = loss_function
     optimizer = optimizer
     
-    encoder = models["encoder"]
-    projector = models["projector"]
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    
+    encoder = models["encoder"].to(device)
+    projector = models["projector"].to(device)
     
     epochs = args["epochs"]
     batch_size = args["batch_size"]
@@ -22,6 +25,9 @@ def train(args, dataloader, models, loss_function, optimizer):
             
             optimizer.zero_grad()
 
+            x_1 = x_1.to(device)
+            x_2 = x_2.to(device)
+            
             y_1 = encoder(x_1)
             y_2 = encoder(x_2)
 
@@ -34,6 +40,10 @@ def train(args, dataloader, models, loss_function, optimizer):
             optimizer.step()
             
             loss_item += loss.item()
+        
+            break
+        
+        scheduler.step()
         
         loss_epoch.append(loss_item)
     

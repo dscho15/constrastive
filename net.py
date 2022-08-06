@@ -16,6 +16,9 @@ class Encoder(nn.Module):
         if verbose:
             print("Encoder module")
             print(self.resnet_18_pretrained.modules)
+            
+        for p in self.resnet_18_pretrained.parameters():
+            p.requires_grad = True
     
     def forward(self, x):
         return self.resnet_18_pretrained(x)
