@@ -1,23 +1,45 @@
+import tqdm as tqdm
 import torch.nn.functional as functional
 
-def train(epochs, dataloader, encoder, projector, augmentations, loss, **kwargs):
+def train(args, dataloader, models, loss_function, optimizer):
     
-    for epoch in range(epochs):
+    criterion = loss_function
+    optimizer = optimizer
+    
+    encoder = models["encoder"]
+    projector = models["projector"]
+    
+    epochs = args["epochs"]
+    batch_size = args["batch_size"]
+    
+    loss_epoch = []
+    
+    for epoch in tqdm(range(epochs)):
         
-        for batch, (x, y) in enumerate(dataloader):
-
-            x_1 = augmentations(x)
-            x_2 = augmentations(x)
+        loss_item = 0
+        
+        for step, ((x_1, x_2), _) in enumerate(dataloader):
+            
+            optimizer.zero_grad()
 
             y_1 = encoder(x_1)
             y_2 = encoder(x_2)
 
             z_1 = projector(y_1)
             z_2 = projector(y_2)
+            
+            loss = criterion(z_1, z_2)
+            loss.backward()
+            
+            optimizer.step()
+            
+            loss_item += loss.item()
+        
+        loss_epoch.append(loss_item)
+    
+    return encoder, loss_epoch
 
-            z_1 = functional.normalize(z_1)
-            z_2 = functional.normalize(z_2)
-
-            s = z_1 @ z_2.T
+            
+            
             
             
