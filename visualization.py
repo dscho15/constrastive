@@ -9,9 +9,7 @@ def visualize_embedding(X, labels):
         labels (np.ndarray): The labels of shape (N (embeddings)).
     """
     
-    dim = X.shape[1]
     tsne = TSNE()
-    
     X_reduced = tsne.fit_transform(X)
     
     plt.figure(figsize=(10, 10))
@@ -29,3 +27,5 @@ if __name__ == '__main__':
     labels = np.array([0]*25 + [1]*25 + [2]*25 + [3]*25)
     
     visualize_embedding(X, labels)
+    
+    d = {}
