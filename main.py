@@ -36,6 +36,4 @@ if __name__ == "__main__":
                                 split="unlabeled", 
                                 transform=TransformsSimCLR(img_size))
     
-    input("lort")
-    
     pass
