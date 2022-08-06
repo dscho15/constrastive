@@ -22,13 +22,32 @@ def visualize_embedding(X, labels = None):
 
 if __name__ == '__main__':
     
-    X1 = np.random.rand(25, 128) + 1
-    X2 = np.random.rand(25, 128) -1
-    X3 = np.random.rand(25, 128) + 0.5
-    X4 = np.random.rand(25, 128) - 0.5
-    X = np.concatenate((X1, X2, X3, X4), axis=0)
-    labels = np.array([0]*25 + [1]*25 + [2]*25 + [3]*25)
+    # X1 = np.random.rand(25, 128) + 1
+    # X2 = np.random.rand(25, 128) -1
+    # X3 = np.random.rand(25, 128) + 0.5
+    # X4 = np.random.rand(25, 128) - 0.5
+    # X = np.concatenate((X1, X2, X3, X4), axis=0)
+    # labels = np.array([0]*25 + [1]*25 + [2]*25 + [3]*25)
     
-    visualize_embedding(X, labels)
+    # visualize_embedding(X, labels)
     
-    d = {}
+    from net import Encoder as ConstrastEncoder
+    import torch
+    import torchvision.datasets as datasets
+    import torchvision
+    
+    # load model
+    model = ConstrastEncoder()
+    model.load_state_dict(torch.load("models/encoder"))
+    model.eval()
+    
+    # load data
+    train_dataset = datasets.STL10('data', 
+                                split="train",
+                                transform=torchvision.transforms.ToTensor())
+    
+    # get embedding
+    out = model(torch.from_numpy(train_dataset.data[:100]).float())
+    out = out.detach().numpy()
+    
+    visualize_embedding(out, train_dataset.labels[:100])
